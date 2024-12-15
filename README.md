@@ -1,8 +1,8 @@
-# Apply Kedro Orchestration Pipeline to Deploy Deep Learning Transformer Architecture for Toxic Comment Classification Problem
-
+# Applying Kedro Orchestration Pipelines to Deploy a Deep Learning Transformer Architecture for the Toxic Comment Classification Problem
 ## About
 
-
+TODO
+---
 
 [![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
 

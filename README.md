@@ -8,9 +8,9 @@ This Kedro project, equipped with Kedro-Viz integration, has been developed to a
 
 ### Key Features
 
-    - Kedro-Viz Setup: Provides visual representation of the data pipelines to improve workflow comprehension and debugging.
-    - Flexible Dataset Management: Handles multiple datasets, including English and multilingual data, designed for toxic comment classification.
-    - BERT-Ready Data: Preprocessed datasets for compatibility with transformer-based models like BERT.
+- Kedro-Viz Setup: Provides visual representation of the data pipelines to improve workflow comprehension and debugging.
+- Flexible Dataset Management: Handles multiple datasets, including English and multilingual data, designed for toxic comment classification.
+- BERT-Ready Data: Preprocessed datasets for compatibility with transformer-based models like BERT.
     
 
 ## Dataset Overview

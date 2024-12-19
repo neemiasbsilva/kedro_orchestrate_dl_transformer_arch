@@ -11,24 +11,23 @@ This Kedro project, equipped with Kedro-Viz integration, has been developed to a
 - Kedro-Viz Setup: Provides visual representation of the data pipelines to improve workflow comprehension and debugging.
 - Flexible Dataset Management: Handles multiple datasets, including English and multilingual data, designed for toxic comment classification.
 - BERT-Ready Data: Preprocessed datasets for compatibility with transformer-based models like BERT.
-    
 
 ## Dataset Overview
-This project incorporates datasets from the Jigsaw ["Toxic Comment Classification"](https://www.kaggle.com/competitions/jigsaw-multilingual-toxic-comment-classification/data?select=test.csv). The datasets include labeled comments sourced from platforms like Wikipedia and Civil Comments. 
+
+This project incorporates datasets from the Jigsaw ["Toxic Comment Classification"](https://www.kaggle.com/competitions/jigsaw-multilingual-toxic-comment-classification/data?select=test.csv). The datasets include labeled comments sourced from platforms like Wikipedia and Civil Comments.
 
 Description:
     - Comment text: the primary focus, containing the actual text of comments;
     - Toxic Column: Indicates whether the comment is toxic (`1`) or non-toxic (`0`).
 
-
 ## Rules and guidelines
 
 In order to get the best out of the template:
 
-* Don't remove any lines from the `.gitignore` file we provide
-* Make sure your results can be reproduced by following a [data engineering convention](https://docs.kedro.org/en/stable/faq/faq.html#what-is-data-engineering-convention)
-* Don't commit data to your repository
-* Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
+- Don't remove any lines from the `.gitignore` file we provide
+- Make sure your results can be reproduced by following a [data engineering convention](https://docs.kedro.org/en/stable/faq/faq.html#what-is-data-engineering-convention)
+- Don't commit data to your repository
+- Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
 
 ## How to install dependencies
 
@@ -36,7 +35,7 @@ Declare any dependencies in `requirements.txt` for `pip` installation.
 
 To install them, run:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
@@ -44,7 +43,7 @@ pip install -r requirements.txt
 
 You can run your Kedro project with:
 
-```
+```bash
 kedro run
 ```
 
@@ -52,7 +51,7 @@ kedro run
 
 Have a look at the files `src/tests/test_run.py` and `src/tests/pipelines/data_science/test_pipeline.py` for instructions on how to write your tests. Run the tests as follows:
 
-```
+```bash
 pytest
 ```
 

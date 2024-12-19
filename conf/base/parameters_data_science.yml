@@ -1,12 +1,12 @@
 model_options:
-  test_size: 0.2
-  random_state: 3
-  features:
-    - engines
-    - passenger_capacity
-    - crew
-    - d_check_complete
-    - moon_clearance_complete
-    - iata_approved
-    - company_rating
-    - review_scores_rating
+  MAX_LEN: 256
+  BATCH_SIZE: 16
+  LR: 0.00001
+  EPOCHS: 2
+  uri: "mlruns"
+  experiment_name: "Applying Kedro Orchestration Pipelines to Deploy a Deep Learning Transformer Architecture for the Toxic Comment Classification Problem"
+  plot_path: "data/09_tracking"
+  summary_path: "data/07_model_output/model_summary.txt"
+
+evaluation_options:
+  prediction_path: "data/09_tracking/test_predictions.json"

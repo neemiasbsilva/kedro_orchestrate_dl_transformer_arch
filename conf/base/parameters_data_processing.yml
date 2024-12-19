@@ -1,0 +1,9 @@
+preprocessing_options:
+  MAX_LEN: 256
+  tokenizer_path: "distilbert-base-uncased"
+  fast_tokenizer_path: "data/05_model_input"
+  
+dataset_tf_options:
+  BATCH_SIZE: 16
+  AUTO_PREFETCH: True
+  SHUFFLE_BUFFER: 1000

@@ -2,6 +2,12 @@
 
 [![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
 
+![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=TensorFlow&logoColor=white)
+
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+
+![mlflow](https://img.shields.io/badge/mlflow-%23d9ead3.svg?style=for-the-badge&logo=numpy&logoColor=blue)
+
 ## Project Overview
 
 This Kedro project, equipped with Kedro-Viz integration, has been developed to analyze and classify textual data from toxic comment datasets. The project's objective is to facilitate machine learning workflows for predicting the toxicity of comments across multiple datasets, leveraging structured pipelines and reproducible data engineering practices. The kedro version `kedro 0.19.10`. For more information take a look at the [Kedro documentation](https://docs.kedro.org).

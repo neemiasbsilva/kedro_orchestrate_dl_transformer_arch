@@ -1,28 +1,50 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import evaluate_model, split_data, train_model
-
+from .nodes import build_model, train_model_with_mlflow, evaluation_model_step#evaluate_model, split_data, train_model
 
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline(
         [
             node(
-                func=split_data,
-                inputs=["model_input_table", "params:model_options"],
-                outputs=["X_train", "X_test", "y_train", "y_test"],
-                name="split_data_node",
+                func=build_model,
+                inputs=["params:model_options"],
+                outputs="dl_model",
+                name="build_dl_model_step"
             ),
             node(
-                func=train_model,
-                inputs=["X_train", "y_train"],
-                outputs="regressor",
-                name="train_model_node",
+                func=train_model_with_mlflow,
+                inputs=["dl_model", "train_dataset", "val_dataset", "X_train", "params:model_options"],
+                outputs=["dl_model_trained", "experiment_id"],
+                name="train_dl_model_step"
             ),
             node(
-                func=evaluate_model,
-                inputs=["regressor", "X_test", "y_test"],
-                name="evaluate_model_node",
-                outputs="metrics",
-            ),
+                func=evaluation_model_step,
+                inputs=["dl_model_trained", "experiment_id", "test_dataset", "params:evaluation_options"],
+                outputs="champions_model"
+            )
         ]
     )
+
+# def create_pipeline(**kwargs) -> Pipeline:
+#     return pipeline(
+#         [
+#             node(
+#                 func=split_data,
+#                 inputs=["model_input_table", "params:model_options"],
+#                 outputs=["X_train", "X_test", "y_train", "y_test"],
+#                 name="split_data_node",
+#             ),
+#             node(
+#                 func=train_model,
+#                 inputs=["X_train", "y_train"],
+#                 outputs="regressor",
+#                 name="train_model_node",
+#             ),
+#             node(
+#                 func=evaluate_model,
+#                 inputs=["regressor", "X_test", "y_test"],
+#                 name="evaluate_model_node",
+#                 outputs="metrics",
+#             ),
+#         ]
+#     )

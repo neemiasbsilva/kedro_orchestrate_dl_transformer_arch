@@ -160,3 +160,5 @@ notebooks/mlruns/*
 
 # remove session store
 session_store.db
+
+notebooks/02-NBS-deep-learning-transfomers.ipynb

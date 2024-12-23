@@ -37,9 +37,7 @@ In order to get the best out of the template:
 - Don't commit data to your repository
 - Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
 
-## How to install dependencies
-
-Declare any dependencies in `requirements.txt` for `pip` installation.
+## Get started
 
 To install them, run:
 
@@ -47,21 +45,20 @@ To install them, run:
 pip install -r requirements.txt
 ```
 
-### How to run your Kedro pipeline
-
-You can run your Kedro project with:
+To run your Kedro pipeline
 
 ```bash
 kedro run
 ```
 
-### How to test your Kedro project
-
-Have a look at the files `src/tests/test_run.py` and `src/tests/pipelines/data_science/test_pipeline.py` for instructions on how to write your tests. Run the tests as follows:
+For test the kedro pipeline
 
 ```bash
 pytest
 ```
 
-To configure the coverage threshold, look at the `.coveragerc` file.
+To serve the champions model, you can build the container `toxic-comment-endpoint` using the `fastapi` package for serving.
 
+```bash
+docker build -t toxic-comment-endpoint .
+```

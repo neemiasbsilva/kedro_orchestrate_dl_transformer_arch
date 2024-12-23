@@ -20,7 +20,7 @@ dependencies = [
     "tensorflow==2.16.2",
     "tensorflow-macos",
     "tensorflow-metal",
-    "mlflow"
+    "mlflow==2.19.0"
 
 ]
 

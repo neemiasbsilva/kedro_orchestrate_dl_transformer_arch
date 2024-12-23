@@ -1,0 +1,10 @@
+endpoint:
+  experiment_id: "585172625793323551"
+  metric: "accuracy"
+  ascending: false
+
+params:
+  tokenizer_path: "distilbert-base-uncased"
+  fast_tokenizer_path: "data/05_model_input"
+  BATCH_SIZE: 32
+  AUTO_PREFETCH: True

@@ -22,9 +22,9 @@ def preprocessing(train_data: pd.DataFrame, val_data: pd.DataFrame, test_data: p
         tuple: Processed training, validation, and test embeddings, along with their corresponding labels.
     """
     logging.info("Starting preprocessing function.")
-    train_data = train_data.iloc[:100]
-    val_data = val_data.iloc[:50]
-    test_data = test_data.iloc[50:100]
+    # train_data = train_data.iloc[:100]
+    # val_data = val_data.iloc[:50]
+    # test_data = test_data.iloc[50:100]
     test_data = test_data.reset_index(drop=True)
 
     logging.info("Loading tokenizer from path: %s", params["tokenizer_path"])

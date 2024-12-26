@@ -50,6 +50,14 @@ Description:
 - Comment text: The primary data containing user-submitted comments;
 - Toxic Column: A binary label where `1` indicates toxic comments, and `0` indicates non-toxic comments.
 
+After that, you need to download the follow files:
+
+- `jigsaw-toxic-comment-train.csv`;
+- `validation.csv`;
+- `test.csv`.
+
+For all the files, add in the follow path: `data/01_raw/`
+
 ---
 
 ## Rules and guidelines

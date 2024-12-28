@@ -26,6 +26,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Install pytest dependencie
+      run: |
+        pip install pytest
+
     - name: Run unit test with pytest
       run: |
         pytest --cov=src/toxic_comment_classification_kedro tests/

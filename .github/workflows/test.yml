@@ -33,7 +33,7 @@ jobs:
 
     - name: Set PYTHONPATH for the tests
       run: |
-        echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+        echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
 
     - name: Run unit test with pytest
       run: |

@@ -48,6 +48,9 @@ dev = [
     "ruff~=0.1.8"
 ]
 
+
+
+
 [tool.setuptools.dynamic]
 version = {attr = "toxic_comment_classification_kedro.__version__"}
 
@@ -57,16 +60,12 @@ namespaces = false
 
 [tool.kedro]
 package_name = "toxic_comment_classification_kedro"
-project_name = "toxic-comment-classification-kedro"
+project_name = "toxic_comment_classification_kedro"
 kedro_init_version = "0.19.10"
 tools = "['Linting', 'Testing', 'Custom Logging', 'Documentation', 'Data Structure', 'Kedro Viz']"
 example_pipeline = "True"
 source_dir = "src"
 
-[tool.pytest.ini_options]
-addopts = """
---cov-report term-missing \
---cov src/toxic_comment_classification_kedro -ra"""
 
 [tool.coverage.report]
 fail_under = 0

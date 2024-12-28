@@ -29,6 +29,7 @@ jobs:
     - name: Install pytest dependencie
       run: |
         pip install pytest
+        pip install pytest-cov
 
     - name: Run unit test with pytest
       run: |

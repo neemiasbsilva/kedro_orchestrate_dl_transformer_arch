@@ -31,6 +31,10 @@ jobs:
         pip install pytest
         pip install pytest-cov
 
+    - name: Set PYTHONPATH for the tests
+      run: |
+        echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+
     - name: Run unit test with pytest
       run: |
         pytest --cov=src/toxic_comment_classification_kedro tests/

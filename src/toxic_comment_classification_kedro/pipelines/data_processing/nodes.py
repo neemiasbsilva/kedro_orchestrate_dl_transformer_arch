@@ -1,23 +1,31 @@
 import logging
-import pandas as pd
+
 import numpy as np
-from tokenizers import BertWordPieceTokenizer
-import transformers
+import pandas as pd
 import tensorflow as tf
+import transformers
+from tokenizers import BertWordPieceTokenizer
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
-def preprocessing(train_data: pd.DataFrame, val_data: pd.DataFrame, test_data: pd.DataFrame, params: dict) -> tuple:
+def preprocessing(
+    train_data: pd.DataFrame,
+    val_data: pd.DataFrame,
+    test_data: pd.DataFrame,
+    params: dict,
+) -> tuple:
     """
     Preprocesses the data for model training and evaluation.
-    
+
     Args:
         train_data (pd.DataFrame): Training dataset containing 'comment_text' and 'toxic' columns.
         val_data (pd.DataFrame): Validation dataset containing 'comment_text' and 'toxic' columns.
         test_data (pd.DataFrame): Test dataset containing 'content' column.
         params (dict): Dictionary of parameters for preprocessing.
-    
+
     Returns:
         tuple: Processed training, validation, and test embeddings, along with their corresponding labels.
     """
@@ -28,29 +36,43 @@ def preprocessing(train_data: pd.DataFrame, val_data: pd.DataFrame, test_data: p
     test_data = test_data.reset_index(drop=True)
 
     logging.info("Loading tokenizer from path: %s", params["tokenizer_path"])
-    tokenizer = transformers.DistilBertTokenizer.from_pretrained(params["tokenizer_path"])
+    tokenizer = transformers.DistilBertTokenizer.from_pretrained(
+        params["tokenizer_path"]
+    )
     tokenizer.save_pretrained(params["fast_tokenizer_path"])
 
-    logging.info("Loading fast tokenizer vocab.txt from path: %s", params["fast_tokenizer_path"])
-    fast_tokenizer = BertWordPieceTokenizer(params["fast_tokenizer_path"]+"/vocab.txt")
+    logging.info(
+        "Loading fast tokenizer vocab.txt from path: %s", params["fast_tokenizer_path"]
+    )
+    fast_tokenizer = BertWordPieceTokenizer(
+        params["fast_tokenizer_path"] + "/vocab.txt"
+    )
 
     logging.info("Preprocessing training embeddings.")
-    X_train = preprocess_embeddings(train_data.comment_text.astype(str), fast_tokenizer, maxlen=256)
+    X_train = preprocess_embeddings(
+        train_data.comment_text.astype(str), fast_tokenizer, maxlen=256
+    )
     y_train = train_data.toxic.values
-    
+
     logging.info("Preprocessing validation embeddings.")
-    X_val = preprocess_embeddings(val_data.comment_text.astype(str), fast_tokenizer, maxlen=256)
+    X_val = preprocess_embeddings(
+        val_data.comment_text.astype(str), fast_tokenizer, maxlen=256
+    )
     y_val = val_data.toxic.values
 
     logging.info("Preprocessing test embeddings.")
-    X_test = preprocess_embeddings(test_data.comment_text.astype(str), fast_tokenizer, maxlen=256)
+    X_test = preprocess_embeddings(
+        test_data.comment_text.astype(str), fast_tokenizer, maxlen=256
+    )
     y_test = test_data.toxic.values
 
     logging.info("Preprocessing completed successfully.")
     return X_train, y_train, X_val, y_val, X_test, y_test
 
 
-def preprocess_embeddings(texts: list, tokenizer: BertWordPieceTokenizer, chunk_size=256, maxlen=512)-> np.array:
+def preprocess_embeddings(
+    texts: list, tokenizer: BertWordPieceTokenizer, chunk_size=256, maxlen=512
+) -> np.array:
     """
 
     Args:
@@ -68,7 +90,7 @@ def preprocess_embeddings(texts: list, tokenizer: BertWordPieceTokenizer, chunk_
     all_ids = []
 
     for i in range(0, len(texts), chunk_size):
-        text_chunk = texts[i:i+chunk_size].to_list()
+        text_chunk = texts[i : i + chunk_size].to_list()
         logging.debug("Tokenizing chunk %d-%d", i, i + chunk_size)
 
         encs = tokenizer.encode_batch(text_chunk)
@@ -79,9 +101,14 @@ def preprocess_embeddings(texts: list, tokenizer: BertWordPieceTokenizer, chunk_
 
 
 def create_tf_datasets(
-        X_train: np.array, y_train: np.array, 
-        X_val: np.array, y_val: np.array, 
-        X_test: np.array, y_test: np.array, params: dict) -> tuple:
+    X_train: np.array,
+    y_train: np.array,
+    X_val: np.array,
+    y_val: np.array,
+    X_test: np.array,
+    y_test: np.array,
+    params: dict,
+) -> tuple:
     """
     Create TensorFlow datasets for training, validation and test set.
 
@@ -98,21 +125,38 @@ def create_tf_datasets(
     """
     logging.info("Creating TensorFlow datasets.")
 
-    try: 
+    try:
         AUTO = tf.data.AUTOTUNE if params["AUTO_PREFETCH"] else tf.data.Dataset.prefetch
         logging.info("Creating training dataset.")
-        train_dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train)).repeat().shuffle(
-            params["SHUFFLE_BUFFER"]).batch(params["BATCH_SIZE"]).prefetch(AUTO)
+        train_dataset = (
+            tf.data.Dataset.from_tensor_slices((X_train, y_train))
+            .repeat()
+            .shuffle(params["SHUFFLE_BUFFER"])
+            .batch(params["BATCH_SIZE"])
+            .prefetch(AUTO)
+        )
 
         logging.info("Creating validation dataset.")
-        val_dataset = tf.data.Dataset.from_tensor_slices((X_val, y_val)).batch(
-            params["BATCH_SIZE"]).cache().prefetch(AUTO)
-        
+        val_dataset = (
+            tf.data.Dataset.from_tensor_slices((X_val, y_val))
+            .batch(params["BATCH_SIZE"])
+            .cache()
+            .prefetch(AUTO)
+        )
+
         logging.info("Creating test dataset.")
-        test_dataset = tf.data.Dataset.from_tensor_slices((X_test, y_test)).batch(
-            params["BATCH_SIZE"]).cache().prefetch(AUTO)
+        test_dataset = (
+            tf.data.Dataset.from_tensor_slices((X_test, y_test))
+            .batch(params["BATCH_SIZE"])
+            .cache()
+            .prefetch(AUTO)
+        )
 
         logging.info("Datasets creation completed successfully.")
-        return np.array([train_dataset]), np.array([val_dataset]), np.array([test_dataset])
+        return (
+            np.array([train_dataset]),
+            np.array([val_dataset]),
+            np.array([test_dataset]),
+        )
     except Exception as e:
         logging.error(f"Error in creating Tensorflow datasets: {e}")

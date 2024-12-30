@@ -1,12 +1,12 @@
 import logging
+
 import numpy as np
-from tokenizers import BertWordPieceTokenizer
 import tensorflow as tf
+from tokenizers import BertWordPieceTokenizer
+
 
 def preprocess_prediction_data(
-        texts: list, 
-        fast_tokenizer: BertWordPieceTokenizer,
-        maxlen: int=256
+    texts: list, fast_tokenizer: BertWordPieceTokenizer, maxlen: int = 256
 ) -> np.array:
     """
     Preprocesses the prediction dataset by tokenizing the input texts.
@@ -14,7 +14,7 @@ def preprocess_prediction_data(
     Args:
         texts (list): A list of text samples to preprocess.
         fast_tokenizer (BertWordPieceTokenizer): Pretrained tokenizer.
-        maxlen (int, optional): Maximum token length for padding/truncation. Defaults to 512.
+        maxlen (int, optional): Token length for padding/truncation. Defaults to 512.
 
     Returns:
         np.array: Tokenized and padded input features.
@@ -46,8 +46,16 @@ def create_tf_prediction_dataset(X_pred: np.array, params: dict) -> tf.data.Data
     """
     logging.info("Creating TensorFlow dataset for predictions.")
     try:
-        AUTO = tf.data.AUTOTUNE if params.get("AUTO_PREFETCH", True) else tf.data.Dataset.prefetch
-        prediction_dataset = tf.data.Dataset.from_tensor_slices(X_pred).batch(params["BATCH_SIZE"]).prefetch(AUTO)
+        AUTO = (
+            tf.data.AUTOTUNE
+            if params.get("AUTO_PREFETCH", True)
+            else tf.data.Dataset.prefetch
+        )
+        prediction_dataset = (
+            tf.data.Dataset.from_tensor_slices(X_pred)
+            .batch(params["BATCH_SIZE"])
+            .prefetch(AUTO)
+        )
         logging.info("Prediction dataset created successfully.")
         return prediction_dataset
     except Exception as e:

@@ -1,22 +1,28 @@
+import json
 import logging
 import os
-import numpy as np
-import json
-import tensorflow as tf
-from tensorflow.keras.layers import Layer, Input, Dense
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-from transformers import TFDistilBertModel
-import mlflow
-import matplotlib.pyplot as plt
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+import matplotlib.pyplot as plt
+import mlflow
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.layers import Dense, Input, Layer  # type: ignore
+from tensorflow.keras.models import Model  # type: ignore
+from tensorflow.keras.optimizers import Adam  # type: ignore
+from transformers import TFDistilBertModel
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 class DistilBertLayer(Layer):
     def __init__(self, **kwargs):
         super(DistilBertLayer, self).__init__(**kwargs)
         logging.info("Initializing DistilBertLayer.")
-        self.transformer_layer = TFDistilBertModel.from_pretrained("distilbert-base-uncased")
+        self.transformer_layer = TFDistilBertModel.from_pretrained(
+            "distilbert-base-uncased"
+        )
 
     def call(self, inputs):
         logging.info("Forward pass through DistilBERT")
@@ -24,6 +30,7 @@ class DistilBertLayer(Layer):
         output = self.transformer_layer(input_ids=inputs)[0]  # Sequence output
         logging.debug(f"Output shape after DistilBERT layer: {output.shape}")
         return output
+
 
 def build_model(params: dict) -> Model:
     """Function for get the BERT training model
@@ -37,9 +44,7 @@ def build_model(params: dict) -> Model:
     """
     logging.info(f'uilding model with max_len={params["MAX_LEN"]}')
     input_word_ids = Input(
-        shape=(params["MAX_LEN"],),
-        dtype=tf.int32,
-        name="input_word_ids"
+        shape=(params["MAX_LEN"],), dtype=tf.int32, name="input_word_ids"
     )
 
     sequence_output = DistilBertLayer()(input_word_ids)
@@ -55,14 +60,16 @@ def build_model(params: dict) -> Model:
     model.compile(
         optimizer=Adam(learning_rate=1e-5),
         loss="binary_crossentropy",
-        metrics=["accuracy"]
+        metrics=["accuracy"],
     )
 
     logging.info("Model built and compiled successfully.")
     return model
 
 
-def save_training_history_with_mlflow(history: dict, params: dict, metrics=("accuracy", "loss"), log_to_mlflow=True) -> None:
+def save_training_history_with_mlflow(
+    history: dict, params: dict, metrics=("accuracy", "loss"), log_to_mlflow=True
+) -> None:
     """
     Plots training and validation metrics for a given training history and logs to MLflow.
 
@@ -71,7 +78,6 @@ def save_training_history_with_mlflow(history: dict, params: dict, metrics=("acc
         metrics (tuple): Tuple of metrics to plot (default: ("accuracy", "loss")).
         log_to_mlflow (bool): If True, logs the plots to MLflow.
     """
-    
 
     # Log plot to MLflow
     if log_to_mlflow:
@@ -83,12 +89,12 @@ def save_training_history_with_mlflow(history: dict, params: dict, metrics=("acc
             val_metric = history.get(f"val_{metric}")
 
             if train_metric:
-                plt.plot(train_metric, label=f'Train {metric.capitalize()}')
+                plt.plot(train_metric, label=f"Train {metric.capitalize()}")
             if val_metric:
-                plt.plot(val_metric, label=f'Validation {metric.capitalize()}')
+                plt.plot(val_metric, label=f"Validation {metric.capitalize()}")
 
-            plt.title(f'{metric.capitalize()} Over Epochs')
-            plt.xlabel('Epoch')
+            plt.title(f"{metric.capitalize()} Over Epochs")
+            plt.xlabel("Epoch")
             plt.ylabel(metric.capitalize())
             plt.legend()
             plt.grid(True)
@@ -99,7 +105,13 @@ def save_training_history_with_mlflow(history: dict, params: dict, metrics=("acc
             plt.close()
 
 
-def train_model_with_mlflow(dl_model: tf.keras.Model, train_dataset: tf.data.Dataset, val_dataset: tf.data.Dataset, X_train: np.array, params: dict) -> None:
+def train_model_with_mlflow(
+    dl_model: tf.keras.Model,
+    train_dataset: tf.data.Dataset,
+    val_dataset: tf.data.Dataset,
+    X_train: np.array,
+    params: dict,
+) -> None:
     """
     Trains a deep learning model, logs the training process, and saves artifacts to MLflow.
 
@@ -132,10 +144,8 @@ def train_model_with_mlflow(dl_model: tf.keras.Model, train_dataset: tf.data.Dat
             train_dataset,
             steps_per_epoch=n_steps,
             validation_data=val_dataset,
-            epochs=params["EPOCHS"]
-
+            epochs=params["EPOCHS"],
         )
-
 
         save_training_history_with_mlflow(train_history.history, params)
 
@@ -145,7 +155,11 @@ def train_model_with_mlflow(dl_model: tf.keras.Model, train_dataset: tf.data.Dat
         for epoch, accuracy in enumerate(train_history.history["val_accuracy"]):
             mlflow.log_metric(f"val_accuracy_epoch_{epoch}", accuracy)
 
-        mlflow.tensorflow.log_model(dl_model, artifact_path="distilbert_model", registered_model_name="DistilBERT_Toxic_Comment_Classification")
+        mlflow.tensorflow.log_model(
+            dl_model,
+            artifact_path="distilbert_model",
+            registered_model_name="DistilBERT_Toxic_Comment_Classification",
+        )
         with open(params["summary_path"], "w") as f:
             dl_model.summary(print_fn=lambda x: f.write(x + "\n"))
         mlflow.log_artifact(params["summary_path"])
@@ -155,12 +169,16 @@ def train_model_with_mlflow(dl_model: tf.keras.Model, train_dataset: tf.data.Dat
     return dl_model, experiment.experiment_id
 
 
-def evaluation_model_step(dl_model: tf.keras, experiment_id: str, test_dataset: tf.data.Dataset, params: dict) -> None:
+def evaluation_model_step(
+    dl_model: tf.keras, experiment_id: str, test_dataset: tf.data.Dataset, params: dict
+) -> None:
     test_dataset = test_dataset[0]
     mlflow.set_experiment(experiment_id=experiment_id)
-    
+
     with mlflow.start_run(experiment_id=experiment_id):
-        evaluation_results = dl_model.evaluate(test_dataset, batch_size=params.get("BATCH_SIZE", 32), return_dict=True)
+        evaluation_results = dl_model.evaluate(
+            test_dataset, batch_size=params.get("BATCH_SIZE", 32), return_dict=True
+        )
 
         for metric, value in evaluation_results.items():
             mlflow.log_metric(metric, value)
@@ -178,12 +196,14 @@ def evaluation_model_step(dl_model: tf.keras, experiment_id: str, test_dataset: 
             experiment_ids=[experiment_id],
             filter_string="attributes.status = 'FINISHED'",
             order_by=["metrics.accuracy DESC"],
-            max_results=1
+            max_results=1,
         )
 
         if best_run:
             best_run = best_run[0]
-            logging.info(f"Comparing with the best model from RUN ID: {best_run.info.run_id}")
+            logging.info(
+                f"Comparing with the best model from RUN ID: {best_run.info.run_id}"
+            )
 
             previous_accuracy = best_run.data.metrics.get("accuracy", 0)
             current_accuracy = evaluation_results.get("accuracy", 0)
@@ -197,6 +217,8 @@ def evaluation_model_step(dl_model: tf.keras, experiment_id: str, test_dataset: 
         else:
             logging.info("No previous runs found for comparison.")
             champions_model = dl_model
-        
-        logging.info(f"Evaluation completed and logged in experiment ID: {experiment_id}")
+
+        logging.info(
+            f"Evaluation completed and logged in experiment ID: {experiment_id}"
+        )
         return champions_model

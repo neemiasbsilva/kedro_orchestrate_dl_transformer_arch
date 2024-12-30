@@ -26,6 +26,7 @@ dependencies = [
 
 [project.scripts]
 "toxic-comment-classification-kedro" = "toxic_comment_classification_kedro.__main__:main"
+lint = "pylint src --rcfile=.pylintrc --fail-under=10"
 
 [project.entry-points."kedro.hooks"]
 
@@ -45,7 +46,8 @@ dev = [
     "pytest-cov~=3.0",
     "pytest-mock>=1.7.1, <2.0",
     "pytest~=7.2",
-    "ruff~=0.1.8"
+    "ruff~=0.1.8",
+    "pylint~=2.16.0"
 ]
 
 
@@ -87,7 +89,8 @@ select = [
     "PL",  # Pylint
     "T201", # Print Statement
 ]
-ignore = ["E501"]  # Ruff format takes care of line-too-long
+ignore = ["E501", "PLR0913", "UP008"]  # Ruff format takes care of line-too-long
 
 [tool.kedro_telemetry]
 project_id = "bc67fc87dc99439a91bb6bed5fa02e96"
+

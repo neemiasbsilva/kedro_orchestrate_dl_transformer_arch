@@ -54,6 +54,7 @@ jobs:
         pylint src --rcfile=.pylintrc --fail-under=10
 
   pytest:
+    name: Run pytest
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
